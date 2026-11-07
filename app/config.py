@@ -13,8 +13,8 @@ class Config:
         "DATABASE_URL",
         "postgresql://postgres:postgres@localhost:5432/openwebui_slack",
     )
-    OWUI_DEFAULT_MODEL = os.environ.get(
-        "OWUI_DEFAULT_MODEL", "Qwen3.6-35B-A3B"
+    OPENWEBUI_DEFAULT_MODEL = os.environ.get(
+        "OPENWEBUI_DEFAULT_MODEL", "Qwen3.6-35B-A3B"
     )
     PORT = int(os.environ.get("PORT", "8081"))
     SLACK_SLASH_COMMAND_PATH = os.environ.get(

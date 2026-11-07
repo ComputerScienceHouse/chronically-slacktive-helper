@@ -114,7 +114,7 @@ from app.handlers.thread import ThreadHandler
 owui_client = OpenWebUIClient(
     base_url=Config.OPENWEBUI_BASE_URL,
     api_key="",  # overridden per user in MessageHandler
-    model=Config.OWUI_DEFAULT_MODEL,
+    model=Config.OPENWEBUI_DEFAULT_MODEL,
 )
 
 msg_handler = MessageHandler(client=bolt_app.client, owui=owui_client)
