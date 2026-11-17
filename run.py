@@ -50,6 +50,7 @@ from app.config import Config
 # Database
 # ------------------------------------------------------------------
 from app.db import init_db
+
 init_db(database_url=Config.DATABASE_URL)
 
 # ------------------------------------------------------------------
@@ -100,6 +101,7 @@ def slack_events():
     except Exception as exc:
         logger.exception("Error handling Slack request:")
         from flask import make_response
+
         return make_response(f"Error: {exc}", 500)
 
 
@@ -107,9 +109,9 @@ def slack_events():
 # Event + command listeners (all sync — no async/await)
 # ------------------------------------------------------------------
 
-from app.owui.client import OpenWebUIClient
 from app.handlers.message import MessageHandler
 from app.handlers.thread import ThreadHandler
+from app.owui.client import OpenWebUIClient
 
 owui_client = OpenWebUIClient(
     base_url=Config.OPENWEBUI_BASE_URL,
@@ -122,9 +124,9 @@ thread_handler = ThreadHandler(client=bolt_app.client)
 
 
 @bolt_app.event("app_mention")
-def handle_message(body: dict):
-    """Handle incoming bot messages (text)."""
-    logger.debug("=== message event received ===")
+def handle_mention(body: dict):
+    """Handle incoming mentions (text)."""
+    logger.debug("=== mention event received ===")
     logger.debug("  body keys: %s", list(body.keys()))
     event = body.get("event")
     if not event:
@@ -149,6 +151,12 @@ def handle_message(body: dict):
     msg_handler.on_message(event, {})
     logger.debug("  message handler finished")
 
+@bolt_app.event("message")
+def handle_message(body: dict):
+    """Handle incoming messages (text)."""
+    logger.debug("=== message event received ===")
+    logger.debug("handle messages in channels/DMs/etc todo...")
+    # todo
 
 @bolt_app.command("/enroll")
 def handle_enroll(ack, body, say):
