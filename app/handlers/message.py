@@ -58,14 +58,21 @@ class MessageHandler:
 
         # Add :gear: reaction to the user's message
         try:
-            self.client.reactions_add(name="gear", channel=channel, timestamp=msg_ts)
-            logger.debug("  Reaction added: :gear:")
+            self._add_reaction("gear", channel, msg_ts)
         except Exception:
             logger.warning("  Failed to add :gear: reaction")
 
         # Run the heavy lifting
         self._handle_turn(channel, thread_ts, user_id, text, msg_ts)
         logger.info("Message processing complete")
+
+    def _add_reaction(self, emoji_name: str, channel: str, timestamp: str):
+        self.client.reactions_add(name=emoji_name, channel=channel, timestamp=timestamp)
+        logger.debug(f"  Reaction added: :{emoji_name}:")
+
+    def _remove_reaction(self, emoji_name: str, channel: str, timestamp: str):
+        self.client.reactions_remove(name=emoji_name, channel=channel, timestamp=timestamp)
+        logger.debug(f"  Reaction removed: :{emoji_name}:")
 
     def _handle_turn(
         self,
@@ -97,7 +104,7 @@ class MessageHandler:
                     ":warning: You haven't registered an API key yet. "
                     "Please run `/enroll <your-openwebui-api-key>` first.",
                 )
-                self._remove_gear(channel, msg_ts)
+                self._remove_reaction("gear", channel, msg_ts)
                 return
 
             logger.debug(
