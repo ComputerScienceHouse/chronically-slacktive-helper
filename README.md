@@ -59,6 +59,8 @@ One webhook URL handles everything.
    - Usage Hint: `<api_key>`
 
 Bolt routes both events and slash commands through the same webhook endpoint.
+The endpoint caches the raw request body before Bolt verifies Slack signatures,
+including for form-encoded slash commands.
 
 ### 2. Set up the database
 

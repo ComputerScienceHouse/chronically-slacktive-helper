@@ -91,8 +91,8 @@ def slack_events():
     logger.debug("  method:   %s", request.method)
     logger.debug("  path:     %s", request.path)
     logger.debug("  headers:  %s", dict(request.headers))
-    logger.debug("  data len: %d bytes", len(request.data))
-    logger.debug("  raw body: %s", request.data.decode("utf-8", errors="replace")[:500])
+    # Read and cache the raw bytes before Werkzeug parses form-encoded commands.
+    logger.debug("  data len: %d bytes", len(request.get_data(cache=True)))
 
     try:
         result = slack_handler.handle(request)
@@ -151,12 +151,14 @@ def handle_mention(body: dict):
     msg_handler.on_message(event, {})
     logger.debug("  message handler finished")
 
+
 @bolt_app.event("message")
 def handle_message(body: dict):
     """Handle incoming messages (text)."""
     logger.debug("=== message event received ===")
     logger.debug("handle messages in channels/DMs/etc todo...")
     # todo
+
 
 @bolt_app.command("/enroll")
 def handle_enroll(ack, body, say):
@@ -170,7 +172,7 @@ def handle_enroll(ack, body, say):
     user_id = body.get("user_id")
     user_name = body.get("user_name", "unknown")
 
-    logger.debug("  text: %r (len=%d)", text, len(text))
+    logger.debug("  text length: %d", len(text))
     logger.debug("  user_id: %s", user_id)
     logger.debug("  user_name: %s", user_name)
 
